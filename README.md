@@ -152,6 +152,16 @@ This section captures the main engineering choices and the reasoning behind them
 
 **Schema generation.** For this demo, Hibernate auto-generates the schema from the entities (`ddl-auto=update`). In production this would be set to `validate`, with schema changes managed through versioned migrations (e.g. Flyway) so they are reviewable and reversible.
 
+**Centralized error handling.** A `@RestControllerAdvice` handles exceptions across all controllers in one place. A missing resource (`ResourceNotFoundException`) returns a `404` with a structured JSON body, and validation failures return a `400` listing the offending fields. This keeps error responses consistent and avoids leaking stack traces.
+
+## Testing
+
+The core business logic — the credit/debit balance calculation in `ReportingService` — is covered by unit tests using JUnit 5 and Mockito. The repositories are mocked so the tests exercise the calculation in isolation, covering the credit path, the debit path (including a net-negative balance), and the not-found case. Run the tests with:
+
+```bash
+./mvnw test
+```
+
 ## Possible next steps
 
-Given more time, natural extensions would include: unit tests for the balance calculation and integration tests for the endpoints, endpoints to manage fund–investor membership directly, pagination on list endpoints, and a PostgreSQL profile with Flyway migrations for a production-shaped deployment.
+Given more time, natural extensions would include: integration tests covering the endpoints end-to-end, dedicated endpoints to manage fund–investor membership directly, pagination and filtering on the list endpoints, and a PostgreSQL profile with Flyway migrations for a production-shaped deployment.
