@@ -2,6 +2,7 @@ package com.example.investmentmanagement.service;
 
 import com.example.investmentmanagement.dto.TransactionRequest;
 import com.example.investmentmanagement.dto.TransactionResponse;
+import com.example.investmentmanagement.exception.ResourceNotFoundException;
 import com.example.investmentmanagement.model.Fund;
 import com.example.investmentmanagement.model.Investor;
 import com.example.investmentmanagement.model.Transaction;
@@ -31,7 +32,7 @@ public class TransactionService {
 
     public TransactionResponse findById(Long id){
         Transaction transaction = transactionRepository.findById(id)
-                                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
         return toResponse(transaction);
     }
 
@@ -48,9 +49,9 @@ public class TransactionService {
     private Transaction toEntity(TransactionRequest request){
         Transaction transaction = new Transaction();
         Fund fund = fundRepository.findById(request.getFundId())
-                .orElseThrow(() -> new RuntimeException("Fund not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Fund not found"));
         Investor investor =investorRepository.findById(request.getInvestorId())
-                .orElseThrow(() -> new RuntimeException("Investor not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Investor not found"));
 
 
         transaction.setFund(fund);

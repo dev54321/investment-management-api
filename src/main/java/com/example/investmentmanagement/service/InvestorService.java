@@ -2,6 +2,7 @@ package com.example.investmentmanagement.service;
 
 import com.example.investmentmanagement.dto.InvestorRequest;
 import com.example.investmentmanagement.dto.InvestorResponse;
+import com.example.investmentmanagement.exception.ResourceNotFoundException;
 import com.example.investmentmanagement.model.Investor;
 import com.example.investmentmanagement.repository.InvestorRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class InvestorService {
 
     public InvestorResponse findById(Long id){
         Investor investor = investorRepository.findById(id)
-                                .orElseThrow(() -> new RuntimeException("Investor not found"));
+                                .orElseThrow(() -> new ResourceNotFoundException("Investor not found"));
         return toResponse(investor);
     }
 
@@ -38,7 +39,7 @@ public class InvestorService {
     @Transactional
     public InvestorResponse update(Long id, InvestorRequest updatedInvestor){
         Investor existing = investorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Investor not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Investor not found"));
         existing.setName(updatedInvestor.getName());
         Investor saved = investorRepository.save(existing);
         return toResponse(saved);

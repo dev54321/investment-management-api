@@ -2,6 +2,7 @@ package com.example.investmentmanagement.service;
 
 import com.example.investmentmanagement.dto.FundRequest;
 import com.example.investmentmanagement.dto.FundResponse;
+import com.example.investmentmanagement.exception.ResourceNotFoundException;
 import com.example.investmentmanagement.model.Fund;
 import com.example.investmentmanagement.repository.FundRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class FundService {
 
     public FundResponse findById(Long id){
         Fund fund =fundRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Fund not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Fund not found"));
         return toResponse(fund);
 
     }
@@ -39,7 +40,7 @@ public class FundService {
     @Transactional
     public FundResponse update(Long id, FundRequest updatedFund){
         Fund existing = fundRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fund not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Fund not found"));
         existing.setName(updatedFund.getName());
         Fund saved = fundRepository.save(existing);
         return toResponse(saved);

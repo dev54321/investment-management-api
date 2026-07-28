@@ -2,6 +2,7 @@ package com.example.investmentmanagement.service;
 
 import com.example.investmentmanagement.dto.FundBalanceResponse;
 import com.example.investmentmanagement.dto.InvestorSummaryResponse;
+import com.example.investmentmanagement.exception.ResourceNotFoundException;
 import com.example.investmentmanagement.model.Fund;
 import com.example.investmentmanagement.model.Investor;
 import com.example.investmentmanagement.model.Transaction;
@@ -25,14 +26,14 @@ public class ReportingService {
 
     public FundBalanceResponse getFundBalance(Long fundId) {
         Fund fund = fundRepository.findById(fundId)
-                .orElseThrow(() -> new RuntimeException("Fund not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Fund not found"));
         BigDecimal balance = calculateNet(transactionRepository.findByFundId(fundId));
         return new FundBalanceResponse(fund.getId(), fund.getName(), balance);
     }
 
     public InvestorSummaryResponse getInvestorSummary(Long investorId) {
         Investor investor = investorRepository.findById(investorId)
-                .orElseThrow(() -> new RuntimeException("Investor not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Investor not found"));
         BigDecimal net = calculateNet(transactionRepository.findByInvestorId(investorId));
         return new InvestorSummaryResponse(investor.getId(), investor.getName(), net);
     }
